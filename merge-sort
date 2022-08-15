@@ -1,0 +1,109 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+
+float timedifference_msec(struct timeval t0,struct timeval t1)
+{
+	return(t1.tv_sec - t0.tv_sec) * 1000.0f + (t1.tv_usec - t0.tv_usec) / 1000.0f;
+}
+
+void display(int n,int arr[])
+{
+	int i;
+	for(i=0;i<n;i++)
+	{
+		printf("%d \t",arr[i]);
+	}
+}
+
+void merge(int arr[],int l,int mid, int r)
+{
+	int n1=mid-l+1;
+	int n2=r-mid;
+	int left[n1],right[n2];
+	
+	int i,j,k;
+	
+	for(i=0;i<n1;i++)
+	{
+		left[i]=arr[l+i];
+	}
+	
+	for(j=0;j<n2;j++)
+	{
+		right[j]=arr[mid+1+j];
+	}
+	
+	i=0,j=0,k=l;
+	
+	while(i<n1 && j<n2)
+	{
+		if(left[i]<=right[j])
+		{
+			arr[k]=left[i];
+			i++;
+		}
+		else
+		{
+			arr[k]=right[j];
+			j++;
+		}
+		k++;
+	}
+	
+	while(i<n1)
+	{
+		arr[k]=left[i];
+		k++;
+		i++;
+	}
+	
+	while(j<n2)
+	{
+		arr[k]=right[j];
+		k++;
+		j++;
+	}
+}
+
+
+void mergesort(int arr[],int l ,int r)
+{
+	if(l<r)
+	{
+		int mid=(l+r)/2;
+		mergesort(arr,l,mid);
+		mergesort(arr,mid+1,r);
+		merge(arr,l,mid,r);
+	}
+}
+		
+	
+void main()
+{
+	struct timeval t0;
+	struct timeval t1;
+	float elapsed;
+	int x,n,i,j=0,temp;
+	printf("\n Enter number of elements ");
+	scanf("%d",&n);
+	int arr[n];
+	
+	for(i=0;i<n;i++)
+	{
+		arr[i]=rand()%100;
+	}
+	
+	printf("\n The unsorted elements are :");
+	display(n,arr);
+	
+	gettimeofday(&t0, NULL);
+	
+	mergesort(arr,0,n-1);
+	
+	printf("\n The sorted elements are :");
+	display(n,arr);
+	
+	gettimeofday(&t1, NULL);
+	elapsed=timedifference_msec(t0,t1);
+	printf("\nCode executed in %f milliseconds.\n", elapsed);
